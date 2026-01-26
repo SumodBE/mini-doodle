@@ -1,19 +1,65 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'org.openapi.generator' version '7.3.0'
 }
 
 group = 'com.services'
-version = '1.0-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
 
-repositories {
-    mavenCentral()
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.20'
+    implementation 'org.springframework:spring-web:7.0.3'
+    implementation 'org.springframework:spring-context:7.0.3'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.41'
+    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    api 'jakarta.validation:jakarta.validation-api:3.0.2'
 }
 
-test {
-    useJUnitPlatform()
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/mini-doodle-service-specs/openapi/openapi-v1.yaml"
+    outputDir = "$buildDir/generated"
+    apiPackage = "com.services.mini_doodle.api"
+    modelPackage = "com.services.mini_doodle.model"
+
+    configOptions = [
+            interfaceOnly     : "true",
+            useSpringBoot3    : "true",
+            useLombok         : "true",
+            dateLibrary       : "java8",
+            openApiNullable   : "false"
+    ]
+}
+
+tasks.openApiGenerate {
+    // Make sure the generated folder exists before IDE sync
+    doFirst {
+        file("$buildDir/generated/src/main/java").mkdirs()
+    }
+}
+
+tasks.compileJava {
+    dependsOn tasks.openApiGenerate
+    source("$buildDir/generated/src/main/java")
+}
+
+tasks.register('packageSpecs', Jar) {
+    group = 'build'
+    description = 'Packages OpenAPI generated code from mini-doodle-service-specs as a JAR.'
+    archiveBaseName.set('mini-doodle-service-specs')
+    from("$buildDir/generated/src/main/java") {
+        include '**/*.java'
+    }
+    dependsOn tasks.openApiGenerate, tasks.compileJava
 }

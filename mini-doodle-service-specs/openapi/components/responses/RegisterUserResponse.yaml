@@ -1,0 +1,18 @@
+allOf:
+  - ref: ../schemas/base-response.yaml
+  - type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+
+      email:
+        type: string
+        format: email
+
+      timezone:
+        type: string
+
+      createdAt:
+        type: string
+        format: date-time

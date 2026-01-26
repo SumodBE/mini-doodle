@@ -1,0 +1,13 @@
+type: object
+required:
+  - email
+  - timezone
+
+properties:
+  email:
+    type: string
+    format: email
+
+  timezone:
+    type: string
+    example: Asia/Kolkata

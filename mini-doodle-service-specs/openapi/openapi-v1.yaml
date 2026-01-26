@@ -1,0 +1,17 @@
+openapi: 3.0.3
+
+info:
+  title: Mini Doodle API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/mini-doodle/api/v1
+
+paths:
+  /register:
+    $ref: ./paths/register-user.yaml#/registerUser
+
+components:
+  schemas:
+    User:
+      $ref: ./components/schemas/User.yaml

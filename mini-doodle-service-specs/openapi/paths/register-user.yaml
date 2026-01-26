@@ -1,0 +1,19 @@
+registerUser:
+  post:
+    summary: Register new user
+    operationId: registerUser
+    tags:
+      - Users
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../components/requests/RegisterUserRequest.yaml"
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../components/responses/RegisterUserResponse.yaml"

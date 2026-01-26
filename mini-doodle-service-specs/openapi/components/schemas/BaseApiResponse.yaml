@@ -1,0 +1,13 @@
+type: object
+required:
+  - statusCode
+  - message
+
+properties:
+  statusCode:
+    type: integer
+    example: 0
+
+  message:
+    type: string
+    example: Success
