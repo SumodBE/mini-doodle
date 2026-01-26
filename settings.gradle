@@ -1,0 +1,5 @@
+rootProject.name = 'mini-doodle'
+
+include 'mini-doodle-service'
+include 'mini-doodle-service-specs'
+
