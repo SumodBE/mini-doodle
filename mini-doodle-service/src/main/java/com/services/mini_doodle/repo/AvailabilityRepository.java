@@ -1,8 +1,6 @@
 package com.services.mini_doodle.repo;
 
 import com.services.mini_doodle.model.Availability;
-import com.services.mini_doodle.util.DbResult;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,5 +21,13 @@ public interface AvailabilityRepository extends JpaRepository<Availability, UUID
             @Param("requestedStart") OffsetDateTime start,
             @Param("requestedEnd") OffsetDateTime end
     );
+
+    @Query("SELECT COUNT(a) FROM Availability a " +
+     "WHERE a.userId = :userId " +
+     "AND a.startTime <= :meetingStart " +
+     "AND a.endTime >= :meetingEnd")
+    long isUserAvailable(@Param("userId") UUID userId,
+                            @Param("meetingStart") OffsetDateTime meetingStart,
+                            @Param("meetingEnd") OffsetDateTime meetingEnd);
 
 }

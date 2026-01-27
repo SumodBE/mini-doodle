@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -40,51 +38,15 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         OffsetDateTime end = start.plusMinutes(request.getDurationMinutes());
 
         UUID userId = userDbResult.getValue().get().getId();
-        DbResult<List<Availability>> overlapResult = availabilityAccessor.getOverlappingSlots(userId, start, end);
+        // 3. Call the Reusable Engine
+        DbResult<Availability> result = availabilityAccessor.addAvailability(userId, start, end);
 
-        if (!overlapResult.isSuccess()) {
-            throw InternalServerErrorException.builder()
-                    .msg("Some error occurred while creating the availability. Try again later")
-                    .code(2002)
-                    .build();
+        if (result.isSuccess() && result.getValue().isPresent()) {
+            Availability savedSlot = result.getValue().get();
+            return buildAvailabilityRes(savedSlot.getUserId(), savedSlot.getId());
         }
 
-        if(overlapResult.getValue().isPresent()){
-            List<Availability> overlaps = overlapResult.getValue().get();
-
-            // 4. Perform the Merge Math
-            if (!overlaps.isEmpty()) {
-                for (Availability existing : overlaps) {
-                    // Expand our range to include the existing slot boundaries
-                    if (existing.getStartTime().isBefore(start)) {
-                        start = existing.getStartTime();
-                    }
-                    if (existing.getEndTime().isAfter(end)) {
-                        end = existing.getEndTime();
-                    }
-                }
-                // 5. Delete the old fragments via Accessor
-                DbResult<String> deleteResult = availabilityAccessor.deleteAll(overlaps);
-                if (!deleteResult.isSuccess()) {
-                    throw InternalServerErrorException.builder()
-                            .msg("Some error occurred while creating the availability. Try again later")
-                            .code(2002)
-                            .build();
-                }
-            }
-        }
-
-        // 6. Save the new unified "Super Slot"
-        Availability newSlot = Availability.builder()
-                .userId(userId)
-                .startTime(start)
-                .endTime(end)
-                .build();
-
-        DbResult<Availability> persisted = availabilityAccessor.save(newSlot);
-        if(persisted.isSuccess()){
-            return buildAvailabilityRes(newSlot.getUserId(), newSlot.getId());
-        }
+        // 4. Handle Errors
         throw InternalServerErrorException.builder()
                 .msg("Some error occurred while creating the availability. Try again later")
                 .code(2002)
@@ -107,58 +69,18 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         OffsetDateTime removeStart = request.getStart().withOffsetSameInstant(ZoneOffset.UTC);
         OffsetDateTime removeEnd = removeStart.plusMinutes(request.getDurationMinutes());
         // 3. Find Overlapping Slots
-        DbResult<List<Availability>> overlapResult = availabilityAccessor.getOverlappingSlots(userId, removeStart, removeEnd);
-        if (!overlapResult.isSuccess()) {
+        DbResult<String> reductionResult = availabilityAccessor.reduceAvailability(userId, removeStart, removeEnd);
+        // 4. Handle Specific Errors
+        if (!reductionResult.isSuccess()) {
+            // If the accessor said "error" (DB exception), map to 500
             throw InternalServerErrorException.builder()
                     .msg("Some error occurred while deleting the availability. Try again later")
                     .code(2003)
                     .build();
         }
-        List<Availability> toSave = new ArrayList<>();
-        if(overlapResult.getValue().isEmpty()){
-            throw new BadRequestException("No availabilities found to be deleted.", 2004);
-        }
-        if(overlapResult.getValue().isPresent()){
-            List<Availability> overlaps = overlapResult.getValue().get();
-            for (Availability existing : overlaps) {
-                // Case A: Part of the slot remains BEFORE the removal range
-                if (existing.getStartTime().isBefore(removeStart)) {
-                    toSave.add(Availability.builder()
-                            .userId(userId)
-                            .startTime(existing.getStartTime())
-                            .endTime(removeStart)
-                            .build());
-                }
-
-                // Case B: Part of the slot remains AFTER the removal range
-                if (existing.getEndTime().isAfter(removeEnd)) {
-                    toSave.add(Availability.builder()
-                            .userId(userId)
-                            .startTime(removeEnd)
-                            .endTime(existing.getEndTime())
-                            .build());
-                }
-            }
-            DbResult<String> deleteRes = availabilityAccessor.deleteAll(overlaps);
-            if(!deleteRes.isSuccess()){
-                throw InternalServerErrorException.builder()
-                        .msg("Some error occurred while deleting the availability. Try again later")
-                        .code(2003)
-                        .build();
-            }
-        }
-        DbResult<List<Availability>> res = availabilityAccessor.saveAll(toSave);
-
-        if(res.isSuccess()){
-            return BaseApiResponse.builder()
-                    .message("Success")
-                    .statusCode(0)
-                    .build();
-        }
-
-        throw InternalServerErrorException.builder()
-                .msg("Some error occurred while deleting the availability. Try again later")
-                .code(2003)
+        return BaseApiResponse.builder()
+                .message("Success")
+                .statusCode(0)
                 .build();
     }
 

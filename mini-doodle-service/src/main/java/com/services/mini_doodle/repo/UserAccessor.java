@@ -16,7 +16,7 @@ public class UserAccessor {
 
     public DbResult<User> findByEmail(String email) {
         try {
-                return DbResult.success(userRepository.findByEmail(email).orElse(null));
+            return DbResult.success(userRepository.findByEmail(email).orElse(null));
         } catch (DataAccessException e) {
             return DbResult.error("Database connection failed: " + e.getMessage());
         }

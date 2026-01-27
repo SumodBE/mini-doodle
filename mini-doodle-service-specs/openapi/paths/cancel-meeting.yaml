@@ -1,0 +1,24 @@
+cancelMeeting:
+  delete:
+    summary: Cancel a meeting and restore availability
+    operationId: cancelMeeting
+    tags:
+      - Meeting
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The UUID of the meeting to cancel
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/BaseApiResponse.yaml"
+      '404':
+        description: Meeting ID not found
+      '500':
+        description: Internal Server Error

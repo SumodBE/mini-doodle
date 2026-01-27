@@ -1,0 +1,25 @@
+scheduleMeeting:
+  post:
+    summary: Convert an availability slot into a meeting
+    operationId: scheduleMeeting
+    tags:
+      - Meeting
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/requests/MeetingRequest.yaml#/MeetingRequest'
+    responses:
+      '201':
+        description: Meeting successfully scheduled
+        content:
+          application/json:
+            schema:
+              $ref: "../components/responses/MeetingResponse.yaml"
+      '400':
+        description: Invalid duration or slot not available
+      '404':
+        description: Organizer not found
+      '500':
+        description: Internal Server Error

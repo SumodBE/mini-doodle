@@ -12,7 +12,7 @@ registerUser:
             $ref: "../components/requests/RegisterUserRequest.yaml"
     responses:
       "201":
-        description: Created
+        description: User created
         content:
           application/json:
             schema:

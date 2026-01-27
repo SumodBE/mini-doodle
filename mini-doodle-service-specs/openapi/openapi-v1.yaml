@@ -16,3 +16,9 @@ paths:
 
   /availability/remove:
     $ref: ./paths/remove-availability.yaml#/remove-availability
+
+  /meetings/schedule:
+    $ref: ./paths/schedule-meeting.yaml#/scheduleMeeting
+
+  /meetings/cancel/{id}:
+    $ref: ./paths/cancel-meeting.yaml#/cancelMeeting

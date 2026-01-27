@@ -1,0 +1,33 @@
+MeetingRequest:
+  type: object
+  required:
+    - title
+    - organizerEmail
+    - startTime
+    - durationMinutes
+    - description
+  properties:
+    title:
+      type: string
+      example: "Sprint Planning"
+    description:
+      type: string
+      example: "Reviewing the Q1 roadmap"
+    organizerEmail:
+      type: string
+      format: email
+      example: "host@example.com"
+    startTime:
+      type: string
+      format: date-time
+      example: "2026-02-01T14:00:00Z"
+    durationMinutes:
+      type: integer
+      minimum: 15
+      example: 45
+    participantEmails:
+      type: array
+      items:
+        type: string
+        format: email
+      example: ["guest1@example.com", "guest2@example.com"]
