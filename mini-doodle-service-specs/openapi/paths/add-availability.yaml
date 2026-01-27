@@ -1,0 +1,32 @@
+add-availability:
+  post:
+    summary: Add, modifies or merge availability slots
+    operationId: addAvailability
+    tags:
+      - Availability
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/requests/AvailabilityRequest.yaml'
+    responses:
+      '200':
+        description: Successfully added/merged
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses/AvailabilityResponse.yaml'
+      '400':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/BaseApiResponse.yaml'
+      '500':
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/BaseApiResponse.yaml'
+

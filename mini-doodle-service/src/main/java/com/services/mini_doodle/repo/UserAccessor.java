@@ -2,24 +2,32 @@ package com.services.mini_doodle.repo;
 
 import com.services.mini_doodle.model.User;
 import com.services.mini_doodle.util.DbResult;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
-@Repository
-public interface UserAccessor extends JpaRepository<User, UUID> {
+@Component
+@RequiredArgsConstructor
+public class UserAccessor {
 
-    DbResult<User> findByEmail(String email);
+    private final UserRepository userRepository;
 
-    default DbResult<User> registerUser(User user){
+    public DbResult<User> findByEmail(String email) {
         try {
-            return DbResult.success(save(user));
-        } catch (DataAccessException e){
-            return DbResult.error(e.getMessage());
+                return DbResult.success(userRepository.findByEmail(email).orElse(null));
+        } catch (DataAccessException e) {
+            return DbResult.error("Database connection failed: " + e.getMessage());
         }
     }
 
+    public DbResult<User> registerUser(User user) {
+        try {
+            User savedUser = userRepository.save(user);
+            return DbResult.success(savedUser);
+        } catch (DataAccessException e) {
+            return DbResult.error("Failed to register: " + e.getMessage());
+        }
+    }
 }

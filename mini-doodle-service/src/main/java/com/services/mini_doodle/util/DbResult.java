@@ -1,10 +1,13 @@
 package com.services.mini_doodle.util;
 
+import lombok.Getter;
+
 import java.util.Optional;
 
 public class DbResult<T> {
 
     private final T value;
+    @Getter
     private final String error;
 
     // Private constructor: enforce use of static factory methods
@@ -32,7 +35,4 @@ public class DbResult<T> {
         return Optional.ofNullable(value);
     }
 
-    public String getError() {
-        return error;
-    }
 }

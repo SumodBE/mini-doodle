@@ -11,7 +11,8 @@ paths:
   /user/register:
     $ref: ./paths/register-user.yaml#/registerUser
 
-components:
-  schemas:
-    User:
-      $ref: ./components/schemas/User.yaml
+  /availability/create:
+    $ref: ./paths/add-availability.yaml#/add-availability
+
+  /availability/remove:
+    $ref: ./paths/remove-availability.yaml#/remove-availability

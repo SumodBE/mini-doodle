@@ -4,21 +4,19 @@ import com.services.mini_doodle.model.RegisterUserRequest;
 import com.services.mini_doodle.model.RegisterUserResponse;
 import com.services.mini_doodle.model.User;
 import com.services.mini_doodle.repo.UserAccessor;
-import com.services.mini_doodle.service.MiniDoodleService;
+import com.services.mini_doodle.service.UserService;
 import com.services.mini_doodle.util.DbResult;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class MiniDoodleServiceImpl implements MiniDoodleService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
     private final UserAccessor userAccessor;
-
-    public MiniDoodleServiceImpl(UserAccessor userAccessor) {
-        this.userAccessor = userAccessor;
-    }
 
     @Override
     public RegisterUserResponse registerUser(RegisterUserRequest request) {

@@ -1,0 +1,16 @@
+allOf:
+  - $ref: ../schemas/BaseApiResponse.yaml
+  - type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      userId:
+        type: string
+        format: uuid
+      start:
+        type: string
+        format: date-time
+      end:
+        type: string
+        format: date-time

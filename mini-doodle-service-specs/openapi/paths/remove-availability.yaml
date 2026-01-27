@@ -1,0 +1,26 @@
+remove-availability:
+  post:
+    summary: Remove or split availability ranges
+    description: >
+      Removes a specific time range from the user's availability. 
+      If the range is in the middle of an existing slot, the slot will be split into two.
+    operationId: removeAvailability
+    tags:
+      - Availability
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/requests/AvailabilityRequest.yaml'
+    responses:
+      '200':
+        description: Range successfully removed.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/BaseApiResponse.yaml'
+      '404':
+        description: User not found
+      '400':
+        description: Invalid range provided

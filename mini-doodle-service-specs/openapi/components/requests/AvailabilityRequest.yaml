@@ -1,0 +1,20 @@
+type: object
+required:
+  - email
+  - start
+  - durationMinutes
+properties:
+  email:
+    type: string
+    format: email
+  start:
+    type: string
+    format: date-time
+    description: "Strict UTC format: YYYY-MM-DDTHH:mm:ssZ"
+    example: "2026-02-01T10:00:00Z"
+  durationMinutes:
+    type: integer
+    minimum: 15
+    multipleOf: 15
+    description: "Must be at least 15 and a multiple of 15 (e.g., 15, 30, 45, 60)."
+    example: 30

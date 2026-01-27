@@ -59,7 +59,7 @@ openApiGenerate {
             // ✅ Inject Builder, NoArgs, and AllArgs annotations
             // @Builder requires AllArgsConstructor.
             // Jackson often requires NoArgsConstructor.
-            additionalModelTypeAnnotations: "@lombok.Builder @lombok.AllArgsConstructor",
+            additionalModelTypeAnnotations: "@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor",
 
             dateLibrary             : "java8",
             openApiNullable         : "false"

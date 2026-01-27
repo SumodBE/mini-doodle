@@ -16,14 +16,14 @@ services:
     ports:
       - "5432:5432"
     healthcheck: # Added this (see explanation below)
-      test: [ "CMD-SHELL", "pg_isready -U minidoodle_user -d minidoodle_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U minidoodle_root_user -d minidoodle_db" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: mini-doodle-ui
+    container_name: pgAdmin-for-mini-doodle
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -43,11 +43,13 @@ services:
 
     ports:
       - "8080:8080"
+      - "5005:5005"
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minidoodle
-      SPRING_DATASOURCE_USERNAME: minidoodle
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minidoodle_db
+      SPRING_DATASOURCE_USERNAME: minidoodle_root_user
       SPRING_DATASOURCE_PASSWORD: secret123
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
 volumes:
   pgdata:
