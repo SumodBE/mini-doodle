@@ -1,5 +1,5 @@
 allOf:
-  - ref: ../schemas/base-response.yaml
+  - $ref: ../schemas/BaseApiResponse.yaml
   - type: object
     properties:
       id:

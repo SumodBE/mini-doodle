@@ -1,0 +1,53 @@
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: mini-doodle-postgres
+
+    environment:
+      POSTGRES_DB: minidoodle_db
+      POSTGRES_USER: minidoodle_root_user
+      POSTGRES_PASSWORD: secret123
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+    healthcheck: # Added this (see explanation below)
+      test: [ "CMD-SHELL", "pg_isready -U minidoodle_user -d minidoodle_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: mini-doodle-ui
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build: .
+    container_name: mini-doodle-service
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minidoodle
+      SPRING_DATASOURCE_USERNAME: minidoodle
+      SPRING_DATASOURCE_PASSWORD: secret123
+
+volumes:
+  pgdata:

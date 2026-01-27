@@ -28,38 +28,70 @@ dependencies {
 
 openApiGenerate {
     generatorName = "spring"
+
     inputSpec = "$rootDir/mini-doodle-service-specs/openapi/openapi-v1.yaml"
     outputDir = "$buildDir/generated"
+
     apiPackage = "com.services.mini_doodle.api"
     modelPackage = "com.services.mini_doodle.model"
 
+    // GLOBAL config properties
+    globalProperties = [
+            // Ensure models are always generated
+            models          : "",
+            apis            : "",
+
+    ]
+
+    // GENERATOR-SPECIFIC config options
     configOptions = [
-            interfaceOnly     : "true",
-            useSpringBoot3    : "true",
-            useLombok         : "true",
-            dateLibrary       : "java8",
-            openApiNullable   : "false"
+            interfaceOnly           : "true",
+            skipDefaultInterface    : "true",
+
+            useSpringBoot3          : "true",
+            useJakartaEe            : "true",
+
+            // ✅ Enable Lombok
+            useLombok               : "true",
+
+            generatedConstructorWithRequiredArgs : "false",
+
+            // ✅ Inject Builder, NoArgs, and AllArgs annotations
+            // @Builder requires AllArgsConstructor.
+            // Jackson often requires NoArgsConstructor.
+            additionalModelTypeAnnotations: "@lombok.Builder @lombok.AllArgsConstructor",
+
+            dateLibrary             : "java8",
+            openApiNullable         : "false"
     ]
 }
 
 tasks.openApiGenerate {
-    // Make sure the generated folder exists before IDE sync
+    // Ensure the folder exists before IDE sync
     doFirst {
         file("$buildDir/generated/src/main/java").mkdirs()
     }
 }
 
-tasks.compileJava {
-    dependsOn tasks.openApiGenerate
-    source("$buildDir/generated/src/main/java")
+// ✅ Add generated sources to the main source set
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
 }
 
+// Make sure OpenAPI generation runs before compilation
+tasks.compileJava {
+    dependsOn tasks.openApiGenerate
+}
+
+// ✅ Optional: package a JAR including compiled classes
 tasks.register('packageSpecs', Jar) {
     group = 'build'
-    description = 'Packages OpenAPI generated code from mini-doodle-service-specs as a JAR.'
+    description = 'Packages mini-doodle-service-specs as a JAR including generated code.'
     archiveBaseName.set('mini-doodle-service-specs')
-    from("$buildDir/generated/src/main/java") {
-        include '**/*.java'
-    }
-    dependsOn tasks.openApiGenerate, tasks.compileJava
+    from(sourceSets.main.output) // includes compiled classes from generated sources
+    dependsOn tasks.compileJava
 }

@@ -8,7 +8,7 @@ servers:
   - url: http://localhost:8080/mini-doodle/api/v1
 
 paths:
-  /register:
+  /user/register:
     $ref: ./paths/register-user.yaml#/registerUser
 
 components:
