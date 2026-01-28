@@ -1,8 +1,8 @@
-# Mini-Doodle: Meeting Scheduling Service
+# 🗓️ Mini-Doodle: Meeting Scheduling Service
 
 A robust RESTful API for managing user availability and scheduling meetings with automatic conflict detection and slot management.
 
-This service implements a **"Hard Allocation" (Consumption)** model where scheduling a meeting consumes the corresponding availability slot, splitting and merging time blocks automatically to maintain data integrity.
+This service implements a **"Hard Allocation" (Consumption)**, and **"Smart Slot Management (The "Availability Engine")** model where scheduling a meeting consumes the corresponding availability slot, splitting and merging time blocks automatically to maintain data integrity.
 
 ---
 
