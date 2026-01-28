@@ -80,14 +80,14 @@ public class MeetingServiceImpl implements MeetingService {
             }
         }
 
-        if(created.isSuccess()){
+        if(created.isSuccess() && created.getValue().isPresent()){
             return MeetingResponse.builder()
                     .message("Success")
                     .statusCode(0)
                     .title(request.getTitle())
                     .description(request.getDescription())
                     .organizerEmail(request.getOrganizerEmail())
-                    .meetingId(meeting.getMeetingId())
+                    .meetingId(created.getValue().get().getMeetingId())
                     .startTime(start)
                     .durationMinutes(request.getDurationMinutes())
                     .build();

@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
 public class UserAccessor {
@@ -30,4 +28,5 @@ public class UserAccessor {
             return DbResult.error("Failed to register: " + e.getMessage());
         }
     }
+
 }
