@@ -1,10 +1,10 @@
 fetchSchedule:
   post:
     summary: Fetch unified schedule (Query)
-    description: Retrieves schedule data using a JSON search criteria body.
+    description: Retrieves schedule and availability data using a JSON search criteria body.
     operationId: getSchedule
     tags:
-      - Schedule
+      - FetchSchedule
     requestBody:
       required: true
       content:
