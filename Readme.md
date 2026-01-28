@@ -12,7 +12,7 @@ Prerequisites: **Docker** & **Docker Compose** (No local Java or Gradle installa
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-link>
+    git clone https://github.com/SumodBE/mini-doodle.git
     cd mini-doodle
     ```
 
