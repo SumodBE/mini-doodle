@@ -31,7 +31,7 @@ Prerequisites: **Docker** & **Docker Compose** (No local Java or Gradle installa
 
 Once the application is running, full interactive documentation is available via **Swagger UI**.
 
-* **Interactive UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+* **Swager UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 * **OpenAPI Spec (JSON):** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 You can use the Swagger UI to test endpoints directly from your browser.
@@ -42,19 +42,23 @@ You can use the Swagger UI to test endpoints directly from your browser.
 
 ### 1. The Consumption Model (Hard Allocation)
 We chose a design where booking a meeting **consumes** availability rather than overlaying it.
-* **Why?** This optimizes "Search" performance. Determining if a user is free is a generic `COUNT` query on the `Availability` table, rather than a complex calculation of `(Availability - Meetings)`.
-* **Trade-off:** Cancellation requires logic to "refund" time (implemented via the Merge Engine).
+* **Why?** This optimizes "Search" performance. Determining if a user is free becomes a generic `COUNT` query on the `Availability` table, rather than a computationally expensive calculation of `(Availability - Meetings)`.
+* **Trade-off:** Cancellation requires logic to "refund" time back to the availability pool. This is handled automatically by the **Availability Engine**.
+### 2. Smart Slot Management (The "Availability Engine")
+To support the Consumption Model, we implemented a robust domain engine that handles the lifecycle of time slots.
 
-### 2. Smart Slot Management (The "Engine")
-To support the Consumption Model, we implemented a robust domain engine in the Data Access layer:
-
-* **Automatic Splitting:** * *Scenario:* User is available **09:00 - 12:00**.
+* **Feature A: Automatic Splitting & Consumption**
+    * *Scenario:* User is available **09:00 - 12:00**.
     * *Action:* A meeting is booked for **10:00 - 11:00**.
-    * *Result:* The engine splits the availability into two remaining fragments: **09:00 - 10:00** and **11:00 - 12:00**.
+    * *Result:* The engine handles three variations:
+        1. **Middle Split:** Creates two fragments (**09-10** and **11-12**).
+        2. **Edge Trim:** Booking **09-10** leaves one fragment (**10-12**).
+        3. **Full Consumption:** Booking **09-12** removes the slot entirely.
 
-* **Automatic Merging:** * *Scenario:* User has availability **09:00 - 10:00**.
+* **Feature B: Automatic Merging**
+    * *Scenario:* User has availability **09:00 - 10:00**.
     * *Action:* User adds new availability (or cancels a meeting) for **10:00 - 11:00**.
-    * *Result:* The engine detects these slots touch and merges them into a single continuous block: **09:00 - 11:00**.
+    * *Result:* The engine detects that these slots touch (or overlap) and seamlessly merges them into a single continuous block: **09:00 - 11:00**.
 ### 3. Native Queries for JSONB
 Participants are stored as a JSON List (`["a@b.com", "c@d.com"]`) for flexibility and lightweight storage.
 * **Decision:** We used **PostgreSQL Native Queries** with `jsonb_array_elements_text` to efficiently query inside this JSON blob for conflict detection, which standard JPQL cannot handle efficiently.
