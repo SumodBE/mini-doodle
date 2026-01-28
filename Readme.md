@@ -47,9 +47,14 @@ We chose a design where booking a meeting **consumes** availability rather than 
 
 ### 2. Smart Slot Management (The "Engine")
 To support the Consumption Model, we implemented a robust domain engine in the Data Access layer:
-* **Automatic Splitting:** When a meeting is booked in the middle of a slot (e.g., 09:00-12:00), the engine splits it into two fragments (09:00-10:00 and 11:00-12:00) and removes the booked portion.
-* **Automatic Merging:** When a meeting is cancelled or availability is manually added, the engine detects adjacent or overlapping slots and merges them into a single continuous block. This prevents data fragmentation.
 
+* **Automatic Splitting:** * *Scenario:* User is available **09:00 - 12:00**.
+    * *Action:* A meeting is booked for **10:00 - 11:00**.
+    * *Result:* The engine splits the availability into two remaining fragments: **09:00 - 10:00** and **11:00 - 12:00**.
+
+* **Automatic Merging:** * *Scenario:* User has availability **09:00 - 10:00**.
+    * *Action:* User adds new availability (or cancels a meeting) for **10:00 - 11:00**.
+    * *Result:* The engine detects these slots touch and merges them into a single continuous block: **09:00 - 11:00**.
 ### 3. Native Queries for JSONB
 Participants are stored as a JSON List (`["a@b.com", "c@d.com"]`) for flexibility and lightweight storage.
 * **Decision:** We used **PostgreSQL Native Queries** with `jsonb_array_elements_text` to efficiently query inside this JSON blob for conflict detection, which standard JPQL cannot handle efficiently.
@@ -78,13 +83,63 @@ A pgAdmin container is running for easy database inspection.
 
 ## 🧪 API Usage Guide (Manual)
 
-If you prefer using `curl` or Postman instead of Swagger:
+If you prefer using `curl` instead pf Postman or Swagger UI:
 
-### 1. Add Availability
-**POST** `/api/availability`
-```json
-{
+### 1. Register User
+```bash
+curl -X POST 'http://localhost:8080/user/register' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "firstName": "Nathan",
+  "lastName": "Gold",
+  "email": "nathan.gold@hotmail.com",
+  "timezone": "Asia/Kolkata"
+}'
+```
+
+### 2. Add Availability
+```bash
+curl -X 'POST'
+  'http://localhost:8080/availability/create' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
   "email": "alice@example.com",
   "start": "2026-02-01T09:00:00Z",
   "durationMinutes": 180
-}
+}'
+```
+### 3. Remove Availability
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/availability/remove' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "user@example.com",
+  "start": "2026-02-01T10:00Z",
+  "durationMinutes": 30
+}'
+```
+
+### 4. Schedule Meeting
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/availability/remove' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "user@example.com",
+  "start": "2026-02-01T10:00Z",
+  "durationMinutes": 30
+}'
+```
+### 5. Cancel Meeting
+```bash
+curl -X 'DELETE' \
+  'http://localhost:8080/meetings/cancel/1573d3b9-b294-4f45-a435-7138db05efd7' \
+  -H 'accept: application/json'
+```
+
+
