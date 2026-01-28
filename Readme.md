@@ -145,5 +145,16 @@ curl -X 'DELETE' \
   'http://localhost:8080/meetings/cancel/1573d3b9-b294-4f45-a435-7138db05efd7' \
   -H 'accept: application/json'
 ```
-
+### 6. Fetch the Schedule for a user
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/fetch/schedule' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "sumod.badchhape@gmail.com",
+  "from": "2026-01-01T09:00Z",
+  "to": "2026-03-01T09:00Z"
+}'
+```
 
