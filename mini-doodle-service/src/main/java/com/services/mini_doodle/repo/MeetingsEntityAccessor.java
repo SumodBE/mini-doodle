@@ -55,7 +55,7 @@ public class MeetingsEntityAccessor {
 
     public DbResult<List<MeetingEntity>> findMeetingsByUserId(UUID userId){
         try {
-            return DbResult.success(meetingRepository.findAllByUserId(userId));
+            return DbResult.success(meetingRepository.findAllByOrganizerId(userId));
         } catch (DataAccessException e) {
             log.info("Failed to fetch meetings for userId {}", userId);
             return DbResult.error("Failed to fetch meetings for user: " + e.getMessage());

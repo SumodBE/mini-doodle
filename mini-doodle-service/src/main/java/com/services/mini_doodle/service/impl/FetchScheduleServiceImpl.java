@@ -71,12 +71,18 @@ public class FetchScheduleServiceImpl implements FetchScheduleService {
                         .start(meetingEntity.getStartTime())
                         .end(meetingEntity.getEndTime())
                         .organizerId(meetingEntity.getOrganizer().getId())
+                        .description(meetingEntity.getDescription())
                         .build()).toList();
 
         return FetchScheduleResponse.builder()
                 .availabilities(availabilitiesRes)
                 .meetings(meetings)
                 .statusCode(0)
+                .window(FetchScheduleResponseAllOfWindow.builder()
+                        .start(request.getFrom())
+                        .end(request.getTo())
+                        .build())
+                .email(request.getEmail())
                 .message("Success")
                 .build();
     }
