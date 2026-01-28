@@ -39,10 +39,10 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 
         UUID userId = userDbResult.getValue().get().getId();
         // 3. Call the Reusable Engine
-        DbResult<Availability> result = availabilityAccessor.addAvailability(userId, start, end);
+        DbResult<AvailabilityEntity> result = availabilityAccessor.addAvailability(userId, start, end);
 
         if (result.isSuccess() && result.getValue().isPresent()) {
-            Availability savedSlot = result.getValue().get();
+            AvailabilityEntity savedSlot = result.getValue().get();
             return buildAvailabilityRes(savedSlot.getUserId(), savedSlot.getId());
         }
 

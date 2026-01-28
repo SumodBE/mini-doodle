@@ -36,4 +36,6 @@ public interface MeetingRepository extends JpaRepository<MeetingEntity, UUID> {
                         @Param("startTime") OffsetDateTime startTime,
                         @Param("endTime") OffsetDateTime endTime);
 
+    List<MeetingEntity> findAllByUserId(UUID userId);
+
 }

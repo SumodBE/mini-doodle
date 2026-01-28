@@ -1,0 +1,39 @@
+allOf:
+  - $ref: ../schemas/BaseApiResponse.yaml
+  - type: object
+    description: Consolidated view of a user's schedule (free time + bookings).
+    required:
+      - email
+      - window
+      - availabilities
+      - meetings
+    properties:
+      email:
+        type: string
+        format: email
+        example: "alice@example.com"
+      window:
+        type: object
+        description: The time range this data covers.
+        required:
+          - start
+          - end
+        properties:
+          start:
+            type: string
+            format: date-time
+            example: "2026-02-01T00:00:00Z"
+          end:
+            type: string
+            format: date-time
+            example: "2026-03-01T00:00:00Z"
+      availabilities:
+        type: array
+        description: List of free time slots.
+        items:
+          $ref: "../schemas/Availability.yaml"
+      meetings:
+        type: array
+        description: List of booked meetings.
+        items:
+          $ref: "../schemas/Meeting.yaml"

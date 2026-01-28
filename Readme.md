@@ -1,8 +1,8 @@
 # 🗓️ Mini-Doodle: Meeting Scheduling Service
 
-A robust RESTful API for managing user availability and scheduling meetings with automatic conflict detection and slot management.
+A robust RESTful API for managing user availabilityEntity and scheduling meetings with automatic conflict detection and slot management.
 
-This service implements a **"Hard Allocation" (Consumption)**, and **"Smart Slot Management (The "Availability Engine")** model where scheduling a meeting consumes the corresponding availability slot, splitting and merging time blocks automatically to maintain data integrity.
+This service implements a **"Hard Allocation" (Consumption)**, and **"Smart Slot Management (The "Availability Engine")** model where scheduling a meeting consumes the corresponding availabilityEntity slot, splitting and merging time blocks automatically to maintain data integrity.
 
 ---
 
@@ -41,9 +41,9 @@ You can use the Swagger UI to test endpoints directly from your browser.
 ## 🏗 Architecture & Design Decisions
 
 ### 1. The Consumption Model (Hard Allocation)
-We chose a design where booking a meeting **consumes** availability rather than overlaying it.
+We chose a design where booking a meeting **consumes** availabilityEntity rather than overlaying it.
 * **Why?** This optimizes "Search" performance. Determining if a user is free becomes a generic `COUNT` query on the `Availability` table, rather than a computationally expensive calculation of `(Availability - Meetings)`.
-* **Trade-off:** Cancellation requires logic to "refund" time back to the availability pool. This is handled automatically by the **Availability Engine**.
+* **Trade-off:** Cancellation requires logic to "refund" time back to the availabilityEntity pool. This is handled automatically by the **Availability Engine**.
 ### 2. Smart Slot Management (The "Availability Engine")
 To support the Consumption Model, we implemented a robust domain engine that handles the lifecycle of time slots.
 
@@ -56,8 +56,8 @@ To support the Consumption Model, we implemented a robust domain engine that han
         3. **Full Consumption:** Booking **09-12** removes the slot entirely.
 
 * **Feature B: Automatic Merging**
-    * *Scenario:* User has availability **09:00 - 10:00**.
-    * *Action:* User adds new availability (or cancels a meeting) for **10:00 - 11:00**.
+    * *Scenario:* User has availabilityEntity **09:00 - 10:00**.
+    * *Action:* User adds new availabilityEntity (or cancels a meeting) for **10:00 - 11:00**.
     * *Result:* The engine detects that these slots touch (or overlap) and seamlessly merges them into a single continuous block: **09:00 - 11:00**.
 ### 3. Native Queries for JSONB
 Participants are stored as a JSON List (`["a@b.com", "c@d.com"]`) for flexibility and lightweight storage.
@@ -105,7 +105,7 @@ curl -X POST 'http://localhost:8080/user/register' \
 ### 2. Add Availability
 ```bash
 curl -X 'POST'
-  'http://localhost:8080/availability/create' \
+  'http://localhost:8080/availabilityEntity/create' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -117,7 +117,7 @@ curl -X 'POST'
 ### 3. Remove Availability
 ```bash
 curl -X 'POST' \
-  'http://localhost:8080/availability/remove' \
+  'http://localhost:8080/availabilityEntity/remove' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -130,7 +130,7 @@ curl -X 'POST' \
 ### 4. Schedule Meeting
 ```bash
 curl -X 'POST' \
-  'http://localhost:8080/availability/remove' \
+  'http://localhost:8080/availabilityEntity/remove' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{

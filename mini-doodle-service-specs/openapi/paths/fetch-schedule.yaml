@@ -1,0 +1,32 @@
+fetchSchedule:
+  post:
+    summary: Fetch unified schedule (Query)
+    description: Retrieves schedule data using a JSON search criteria body.
+    operationId: getSchedule
+    tags:
+      - Schedule
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../components/requests/FetchScheduleRequest.yaml#/FetchScheduleRequest"
+    responses:
+      "200":
+        description: Schedule retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/responses/FetchScheduleResponse.yaml"
+      '400':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/BaseApiResponse.yaml'
+      '500':
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/BaseApiResponse.yaml'

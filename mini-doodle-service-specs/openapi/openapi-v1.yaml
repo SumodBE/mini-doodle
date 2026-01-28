@@ -22,3 +22,6 @@ paths:
 
   /meetings/cancel/{id}:
     $ref: ./paths/cancel-meeting.yaml#/cancelMeeting
+
+  /fetch/schedule:
+    $ref: ./paths/fetch-schedule.yaml#/fetchSchedule

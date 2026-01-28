@@ -1,0 +1,34 @@
+type: object
+required:
+  - id
+  - title
+  - start
+  - end
+  - participants
+  - organizerId
+properties:
+  id:
+    type: string
+    format: uuid
+    example: "mt_98765-4321"
+  organizerId:
+    type: string
+    format: uuid
+    example: "mt_98765-4321"
+  title:
+    type: string
+    example: "Project Sync"
+  start:
+    type: string
+    format: date-time
+    example: "2026-02-02T14:00:00Z"
+  end:
+    type: string
+    format: date-time
+    example: "2026-02-02T14:30:00Z"
+  participants:
+    type: array
+    items:
+      type: string
+      format: email
+    example: ["alice@example.com", "bob@example.com"]

@@ -1,0 +1,23 @@
+type: object
+required:
+  - id
+  - start
+  - end
+  - userId
+properties:
+  id:
+    type: string
+    format: uuid
+    example: "av_12345-6789"
+  userId:
+    type: string
+    format: uuid
+    example: "av_12345-6789"
+  start:
+    type: string
+    format: date-time
+    example: "2026-02-01T09:00:00Z"
+  end:
+    type: string
+    format: date-time
+    example: "2026-02-01T12:00:00Z"

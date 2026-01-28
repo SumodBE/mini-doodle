@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "availability", indexes = {
         @Index(name = "idx_availability_user_time", columnList = "user_id, start_time, end_time")
 })
-public class Availability {
+public class AvailabilityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

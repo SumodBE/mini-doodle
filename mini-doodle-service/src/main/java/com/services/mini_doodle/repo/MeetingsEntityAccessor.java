@@ -3,6 +3,7 @@ package com.services.mini_doodle.repo;
 import com.services.mini_doodle.model.MeetingEntity;
 import com.services.mini_doodle.util.DbResult;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MeetingsEntityAccessor {
 
     private final MeetingRepository meetingRepository;
@@ -48,6 +50,15 @@ public class MeetingsEntityAccessor {
             return DbResult.success(meetingRepository.countConflicts(emails, start, end));
         } catch (DataAccessException e) {
             return DbResult.error("Failed to count conflicts: " + e.getMessage());
+        }
+    }
+
+    public DbResult<List<MeetingEntity>> findMeetingsByUserId(UUID userId){
+        try {
+            return DbResult.success(meetingRepository.findAllByUserId(userId));
+        } catch (DataAccessException e) {
+            log.info("Failed to fetch meetings for userId {}", userId);
+            return DbResult.error("Failed to fetch meetings for user: " + e.getMessage());
         }
     }
 
